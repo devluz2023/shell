@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# Function to remove SSH key if it exists
+function remove_ssh_key() {
+    key_path="$1"
+    if [[ -f "$key_path" ]]; then
+        rm "$key_path"
+        echo "Removed existing SSH key: $key_path"
+    fi
+}
+
+# Function to generate SSH key and add it to GitHub account
+function setup_ssh() {
+    email="$1"
+    key_name="$2"
+
+    echo "Setting up SSH for $email..."
+
+    # Remove existing SSH key if it exists
+    remove_ssh_key "~/.ssh/$key_name"
+    remove_ssh_key "~/.ssh/$key_name.pub"
+
+    # Prompt for passphrase
+    read -s -p "Enter passphrase for key '/Users/$(whoami)/.ssh/$key_name': " passphrase
+    echo
+
+    ssh-keygen -t rsa -b 4096 -C "$email" -f ~/.ssh/"$key_name" -N "$passphrase"
+    eval "$(ssh-agent -s)"
+    ssh-add -K ~/.ssh/"$key_name"
+
+    echo "Adding SSH key to $email GitHub account..."
+    cat ~/.ssh/"$key_name".pub
+
+    # Proceed with adding the public key to your GitHub account manually.
+}
+
+# Remove existing SSH keys if they exist
+remove_ssh_key "~/.ssh/id_rsa_binhojulix"
+remove_ssh_key "~/.ssh/id_rsa_binhojulix.pub"
+
+
+# Set up SSH for GitHub account: fabio.jdluz@gmail.com
+setup_ssh "fabio.jdluz@gmail.com" "id_rsa_binhojulix"
+
+# Set up SSH for GitHub account: fabio.luz@urbanobank.com
+setup_ssh "fabio.luz@urbanobank.com" "id_rsa_urbano"
+
+# Set up SSH for GitHub account: Fabio.luz.ext@br.ey.com
+setup_ssh "Fabio.luz.ext@br.ey.com" "id_rsa_ey"
+
+# Configure SSH config file
+echo "Configuring SSH config file..."
+cat <<EOT >> ~/.ssh/config
+# GitHub: fabio.jdluz@gmail.com
+Host github.com-binhojulix
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa_binhojulix
+
+
+EOT
+
+chmod 600 ~/.ssh/config
+
+echo "Configuration completed!"
