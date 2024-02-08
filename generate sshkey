@@ -42,11 +42,7 @@ remove_ssh_key "~/.ssh/id_rsa_binhojulix.pub"
 # Set up SSH for GitHub account: fabio.jdluz@gmail.com
 setup_ssh "fabio.jdluz@gmail.com" "id_rsa_binhojulix"
 
-# Set up SSH for GitHub account: fabio.luz@urbanobank.com
-setup_ssh "fabio.luz@urbanobank.com" "id_rsa_urbano"
 
-# Set up SSH for GitHub account: Fabio.luz.ext@br.ey.com
-setup_ssh "Fabio.luz.ext@br.ey.com" "id_rsa_ey"
 
 # Configure SSH config file
 echo "Configuring SSH config file..."
